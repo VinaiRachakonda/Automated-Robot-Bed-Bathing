@@ -42,11 +42,9 @@ void sigint_handler(int s)
 
 //projects depth map to create a pointcloud
 pcl::PointCloud<pcl::PointXYZRGBA> PointCloud(libfreenect2::Frame* undistorted, libfreenect2::Frame* registered)
-{ //currently failing
+{
 	std::cout<<"Point cloud function running" << std::endl;
-	//or pixel xi=0..511, yi=0..423, (xu, yu) = ((xi+0.5-cx)/fx, (yi+0.5-cy)/fy), 
-	//then the point coordinates you are looking for is (xu*undistorted[512*yi+xi], yu*undistorted[512*yi+xi], undistorted[512*yi+xi]) 
-	//and the color is registered[512*yi+xi]
+
 
 	float* undistorted_data = (float *)undistorted->data;
 	float* registered_data = (float *)registered->data;
@@ -82,9 +80,7 @@ pcl::PointCloud<pcl::PointXYZRGBA> PointCloud(libfreenect2::Frame* undistorted, 
 			AllignedRGB.at<cv::Vec3b>(yi,xi)[2] = rgb[0];
 			i++;}
 	}
-	/*pcl::PointCloud<pcl::PointXYZRGBA> newCloud;
-	  std::vector<int> second (1,1);   
-	  pcl::removeNaNFromPointCloud(cloud, newCloud,second); */
+	
 	pcl::io::savePLYFile("/home/kinect2/Dropbox/data/Trial36/KinectPointCloud.ply", cloud,true);
 
 	std::cerr << "Saved " << cloud.points.size () << " data points to KinectPointCloud.ply." << std::endl;
@@ -102,8 +98,7 @@ cv::Point* redDetection(cv::Point points[]){ //detects largest contour and retur
 	cv::cvtColor(AllignedRGB, hsv, CV_BGR2HSV);  //using globally defined AllignedRGB image from point cloud
 	cv::imwrite("/home/kinect2/Dropbox/data/Trial36/HSV.jpg", hsv);	
 	////get binary image 
-	//cv::inRange(hsv, cv::Scalar(157, 72, 156), cv::Scalar(180, 169, 255), binary);
-	cv::inRange(hsv, cv::Scalar(160, 100, 100), cv::Scalar(179, 255, 255), binary); 
+	cv::inRange(hsv, cv::Scalar(160, 100, 100), cv::Scalar(179, 255, 255), binary);
 	cv::medianBlur(binary,binary,3);
 	cv::dilate(binary,binary,cv::Mat(),cv::Point(-1,-1),1);	
 	cv::imwrite("/home/kinect2/Dropbox/data/Trial36/binary.jpg", binary);	
@@ -125,7 +120,6 @@ cv::Point* redDetection(cv::Point points[]){ //detects largest contour and retur
 	cv::drawContours(binary, contours, maxPosition.y, cv::Scalar(255), CV_FILLED);  
 	cv::imwrite("/home/kinect2/Dropbox/data/Trial36/contours.jpg", binary);
 	
-	//cv::imshow("Binary", binary);
 	cv::waitKey(0);
 	////draw bounding rectangle around largest contour  
 
@@ -142,7 +136,6 @@ cv::Point* redDetection(cv::Point points[]){ //detects largest contour and retur
 	points[1] = cv::Point(r.x ,r.y - r.height); //bottom left
 	points[2] = cv::Point(r.x + r.width,r.y ); //top right
 	points[3] = r.br(); //bottom right
-	//cout << r.height << "acualt height" << endl;
 
 	//get centroid  
 	center.x = r.x + (r.width/2);  
@@ -284,11 +277,7 @@ void transformKinect2Kuka(pcl::PointCloud<pcl::PointXYZRGBA> detectedCloud){ //u
 	for (int i =0; i <detectedCloud.width * detectedCloud.height;i++){ //transformation 
 		double tempdata[] = {detectedCloud.points[i].x  ,detectedCloud.points[i].y ,detectedCloud.points[i].z  ,1};
 		cv::Mat temp(4,1,CV_64F,&tempdata);
-		//cout << (temp) << endl;
 		cv::Mat result = TransformationMat*(temp);
-		//cout << "this is result " << result << endl;
-		//cout << "Val 1: " <<result.at<double>(1,0) << endl;
-
 		cv::Point3d ptPrime(result.at<double>(0,0),result.at<double>(1,0),result.at<double>(2,0));
 
 		KukaPts[i] = ptPrime; //save in array
@@ -545,8 +534,6 @@ int counter  = 0;
   }
 	
 
-//  cv::imshow("Color Image", bgra);
-  //cv::waitKey(0);
   // TODO: restarting ir stream doesn't work!
   // TODO: bad things will happen, if frame listeners are freed before dev->stop() :(
   dev->stop();

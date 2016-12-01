@@ -48,8 +48,6 @@ public class red_box extends RoboticsAPIApplication {
 		lbr_iiwa_7_R800_1 = (LBR) getDevice(kuka_Sunrise_Cabinet_1,
 				"LBR_iiwa_7_R800_1");
 		logger = new RobotLogger("//128.8.140.151/data/Trial36.txt", 10.0);
-		//logger = new RobotLogger("//128.8.140.70/Bowl_Red/Trial26.txt", 10.0);
-		///C:/Users/RRLab/Documents/Vinai_Dropbox/Dropbox/data/
 	}
 	
 	
@@ -67,7 +65,6 @@ public class red_box extends RoboticsAPIApplication {
 	}
 
 	public void run() {
-//		lbr_iiwa_7_R800_1.move(ptpHome());
 		gripper=getApplicationData().createFromTemplate("Robotiq");
 		gripper.attachTo(lbr_iiwa_7_R800_1.getFlange());
 		logger.addCartesianForce(gripper.getFrame("/Gripper_TCP"), null);
@@ -77,9 +74,7 @@ public class red_box extends RoboticsAPIApplication {
 		double y[] = {23.179900,23.384500,23.561200,23.722500,18.707400,18.910700,19.087200,19.259900,13.972200,14.186300,14.381900,14.583100,9.423230,9.629200,9.828040,10.056200,4.635680,4.818800,5.036910,5.285440,0.012723,0.214515,0.446414,0.724121,-4.738890,-4.600580,-4.426710,-4.124490,-9.368260,-9.124820,-8.955650,-8.761440}; 
 		double z[] = {424.067000,424.367000,426.832000,430.382000,419.453000,420.096000,424.263000,428.667000,417.510000,413.305000,419.570000,422.003000,415.896000,415.974000,413.900000,420.872000,412.698000,410.337000,411.750000,416.720000,409.180000,409.022000,410.957000,416.210000,411.282000,408.116000,406.660000,411.701000,409.408000,411.084000,409.838000,409.566000}; 
 
-		/*for (int i = 0; i < z.length; i++){
-			z[i] = z[i] - 10;
-		}*/
+	
 		double A,B,C;
 		double speed =0.1;
 		double normal_force = 15;
@@ -89,26 +84,14 @@ public class red_box extends RoboticsAPIApplication {
 		A=Math.PI;
 		B=0;
 		C=-Math.PI;
-		// A = Math.toRadians(84);
-		 //B = Math.toRadians(23.4);
-		 //C= Math.toRadians(174.92);
-		//.createSpiralPattern(CartPlane.XY,1.0, 20, 5000, 30);
-
+		
 		CartesianSineImpedanceControlMode mode=   CartesianSineImpedanceControlMode.createSinePattern(CartDOF.Y, 2.0,10.0, 500.0);
 				
-				//new CartesianSineImpedanceControlMode();
-				//CartesianSineImpedanceControlMode.createSinePattern(CartDOF.Y, 2.0,10.0, 500.0);
 		
-		//mode = CartesianSineImpedanceControlMode.createSinePattern(CartDOF.Y, 2.0,10.0, 500.0);
-		//mode.parametrize(CartDOF.Z).setStiffness(1000);
 		mode.parametrize(CartDOF.Z).setBias(10);
 		
 		Frame safety = new Frame(344.03,114.60,636.70,A,B,C); //Gripper_TCP
-	//	gripper.getFrame("/Gripper_TCP").move(ptp(safety).setJointVelocityRel(speed)); 
-//		if(x.length==y.length && x.length==z.length)
-//			getLogger().info(N+" length matched");
-		
-		Frame[] F = new Frame [N];
+			Frame[] F = new Frame [N];
 		SPL[] spls = new SPL[N];
 		
 		for(int i=0;i<N;i++)
@@ -165,36 +148,7 @@ public class red_box extends RoboticsAPIApplication {
 		}
 		gripper.getFrame("/Gripper_TCP").move(ptp(safety).setJointVelocityRel(speed)); //to make picture doesn't get messed up
 		getLogger().info("points: "+ N);
-		//Spline Spline1 = new Spline(spls);
-		//gripper.getFrame("/Gripper_TCP").move(Spline1.setJointVelocityRel(speed).setMode(mode));
-		
-//		double flag=0;
-//		for(int i=0;i<N;i++)
-//		{
-//			
-//			if (i>0 && (F[i].getX()==F[i-1].getX()) && (F[i].getY()==F[i-1].getY()) && (F[i].getZ()==F[i-1].getZ()))
-//				flag=1;
-//			else
-//				flag=0;
-//			
-//			
-//			if(flag==0)
-//				{
-//					Frame FA = new Frame(F[i].getX(),F[i].getY(),F[i].getZ(),A,B,C);
-//					getLogger().info("  "+ F[i].getZ());
-//					try{ 
-//						
-////						lbr_iiwa_7_R800_1.move(ptp(FA).setJointVelocityRel(speed));getLogger().info(i+" "+flag);
-//						
-//						gripper.getFrame("/Gripper_TCP").move(ptp(FA).setJointVelocityRel(speed));getLogger().info(i+" "+flag);
-//					
-//					}
-//					catch(CommandInvalidException e){getLogger().info(i+" failed");}
-//					
-//		//			getLogger().info(i+" X "+F[i].getX()+" Y "+F[i].getY()+" Z "+F[i].getZ());
-//				}
-//		}	
-	
+			
 	}
 
 	/**
